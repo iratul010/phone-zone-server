@@ -10,8 +10,7 @@ const port = process.env.PORT || 5000;
 //middleware
 app.use(cors());
 app.use(express.json());
-
-//
+//node-require('crypto').randomBytes(64).toString('hex)
 
 const uri = `mongodb+srv://${process.env.MBD_USER}:${process.env.MBD_PASS}@cluster0.2xlnexh.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -30,6 +29,20 @@ async function run() {
       const result = await mobileAllCollection.find(query).toArray();
       res.send(result);
     });
+
+    //
+    app.get("/jwt", async (req, res) => {
+      const email = req.query.email;
+      const query = { email: email };
+      const user = await usersCollection.findOne(query);
+      console.log(email);
+      if (user) {
+        const token = jwt.sign({ email }, process.env.ACCESS_TOKEN, { expiresIn: "5 days" });
+        return res.send({ accessToken: token });
+      }
+      res.status(403).send({ accessToken: "" });
+    });
+    //
     app.get("/categories", async (req, res) => {
       const query = {};
       const categories = await categoriesCollection.find(query).toArray();
