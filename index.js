@@ -1,6 +1,8 @@
 const express = require("express");
 const cors = require("cors");
 const { MongoClient, ServerApiVersion, ObjectId } = require("mongodb");
+//jsonwebtoken
+const jwt = require("jsonwebtoken");
 require("dotenv").config();
 
 const app = express();
@@ -60,6 +62,19 @@ async function run() {
     app.post("/buyerAndSeller", async (req, res) => {
       const bAndS = req.body;
       const result = await bAndSCollection.insertOne(bAndS);
+      console.log(result);
+      res.send(result);
+    });
+    app.post("/mobiles", async (req, res) => {
+      const cardDetails = req.body;
+      const result = await mobileAllCollection.insertOne(cardDetails);
+      console.log(result);
+      res.send(result);
+    });
+    app.get("/mobiles/:email", async (req, res) => {
+      const email = req.params.email;
+      const query = { email: email };
+      const result = await mobileAllCollection.find(query).toArray();
       console.log(result);
       res.send(result);
     });
